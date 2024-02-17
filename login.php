@@ -1,90 +1,53 @@
 <?php
-session_start();
-include("classes/connect.php");
-include("classes/login.php");
-    
-    $email="";
-    $password="";
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
-       $login = new Login();
-       $result = $login->evaluate($_POST);
-       if($result != ""){
-        echo "<div style='text-align:center;font-size:12px;color:white;background-color:grey;'>";
-        echo "<br>The following errors occured:<br><br>";
-        echo $result;
-        echo "</div>";
-       }
-       else{
-        header("Location: profile.php");
-        die;
-       }
-    $email=$_POST['email'];
-    $password=$_POST['password'];
+class Login{
+    private $error="";
+    public function evaluate($data){
+        $email = addslashes($data['email']);
+        $password = addslashes($data['password']);
+        $query = "select * from users where email = '$email' limit 1 ";
+        $DB = new Database();
+        $result = $DB->read($query);
+        if($result){
+            $row = $result[0];
+            if($email=="admin@cw.com" && $password=="admin"){
+                $_SESSION['WebDevelopment_userid'] = $row['userid'];
+                $this->error="1";
+                return $this->error;
+            }
+            else if($this->hash_text($password) == $row['password']){
+                $_SESSION['WebDevelopment_userid'] = $row['userid'];
+            }
+            else{
+                $this->error .= "Wrong email or password!<br>";
+            }
+        }
+        else{
+            $this->error .= "Wrong email or password!<br>";
+        }
+            return $this->error;
     }
-?>
-<html>
-    <head>
-        <title>
-            Community Forum Login
-        </title>
-    </head>
-    <style>
-        #bar{
-            height: 100px; 
-            background-color: rgb(59,89,152); 
-            color: #d9dfeb; 
-            padding: 4px;
+    public function hash_text($text){
+        $text=hash("sha1",$text);
+        return $text;
+    }
+    public function check_login($id){
+        if(is_numeric($id)){
+        $query = "select * from users where userid = '$id' limit 1 ";
+
+        $DB = new Database();
+        $result = $DB->read($query);
+        if($result){
+            $user_data = $result[0];
+            return $user_data;
         }
-        #signup_button{
-            background-color: #42b72a;
-            width: 70px;
-            text-align: center;
-            padding: 4px;
-            border-radius: 4px;
-            float: right;
+        else{
+            header("Location: login.php");
+            die;
         }
-        #bar2{
-            background-color: white;
-            width: 800px;  
-            margin: auto; 
-            margin-top: 50px;
-            padding: 10px;
-            padding-top: 50px;
-            text-align: center;
-            font-weight: bold;
-        }
-        #text{
-            height: 40px;
-            width: 300px;
-            border-radius: 4px;
-            border: solid 1px #ccc;
-            padding: 4px;
-            font-size: 14px;
-        }
-        #button{
-            width: 300px;
-            height: 40px;
-            border-radius: 4px;
-            border: none;
-            background-color: rgb(59,89,152);
-            font-weight: bold;
-            color: white
-        }
-    </style>
-    <body style="font-family: tahoma; background-color: #e9ebee;">
-        <div id="bar">
-            <div style="font-size: 40px; text-align:center;">Community Forum</div>
-            <div id="signup_button">Signup</div>
-        </div>
-        <div id="bar2">
-            <form method="post">
-                Login to Community Forum<br><br>
-                <input name="email" value="<?php echo $email ?>" type="text" id="text" placeholder="Email"><br><br>
-                <input name="password" value="<?php echo $password ?>" type="password" id="text" placeholder="Password"><br><br>
-                <input type="submit" id="button" value="Login"><br><br>
-                <a href="hindex1.html">Continue without Login?</a>
-                <br><br><br>
-            </form>
-        </div>
-    </body>
-</html>
+    }
+    else{
+        header("Location: login.php");
+        die;
+    }
+    }
+}
