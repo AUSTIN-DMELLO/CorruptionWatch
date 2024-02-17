@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <title>Maps</title>
+            <link rel="stylesheet" type="text/css" href="map.css">
+        </head>
+        <nav>
+            <ul class="navigation">
+                <a href="hindex.html">Home</a>
+                <a href="rindex.html">Resources</a>
+                <a href="hindex.html">History</a>
+                <a href="#" class="active">Maps</a>
+                <a href="profile.php">Forum</a>
+                <a href="cindex.html">Contact and Help</a>
+            </ul>
+        </nav>
+    <body>
+<div class="container">
+    <div class="left-pane">
+        <div class="click">
+        <button id="btn">Get Location</button>
+        </div>
+        <div id="map" style="height: 400px; width: 100%;"></div>
+    
+    <script>
+            function initMap() {
+                var location = { lat: 18.520760, lng: 73.855410 };
+                var map = new google.maps.Map(document.getElementById("map"), {
+                    zoom: 4,
+                    center: location
+                });
+                var location1 = { lat: 19.391928, lng: 72.839729 };
+                var map = new google.maps.Map(document.getElementById("map"), {
+                    zoom: 4,
+                    center: location1
+                });
+                var marker1 = new google.maps.Marker({
+                    position: location1,
+                    map: map
+                });
+                var marker = new google.maps.Marker({
+                    position: location,
+                    map: map
+                });
+                 navigator.geolocation.getCurrentPosition(position => {
+                const { latitude, longitude } = position.coords;
+  
+            });
+            }
+        </script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDeOqeLcqGVfjAPFfvbWjKhbphwxHDR5Mo&callback=initMap">
+        </script>
+       
+        <script>const button = document.querySelector("button");
+            button.addEventListener("click", () => {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const { latitude, longitude } = position.coords;
+                    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+                    fetch(url)
+                        .then(res => res.json())
+                        .then(data => {
+                            // Get the specific address details you want to display
+                            const addressDetails = data.address;
+                            // Convert the address object to a string
+                            const addressString = Object.values(addressDetails).join(', ');
+                            alert(addressString);
+                            document.querySelector("input[name='Live_adderss']").value = addressString;
+                          
+                        })
+                        .catch(() => {
+                            console.log("Error fetching data from API");
+                        });
+                });
+            });
+</script> 
+
+    </div>
+</div>
+
+
+</body>
+</html>

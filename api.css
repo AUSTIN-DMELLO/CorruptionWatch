@@ -1,0 +1,20 @@
+header {
+    background: linear-gradient(45deg, orange, orange);
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+}
+.navigation a:hover {
+    color: #8f94fb;
+}
+
+.navigation {
+    text-align: center;
+}
+
+.navigation a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    margin: 0 20px;
+}

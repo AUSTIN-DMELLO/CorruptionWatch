@@ -1,0 +1,33 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <h1>
+            Live location tracking test   
+        </h1>
+        
+        <div id="output">
+
+        </div>
+    </body>
+
+    <script>
+
+if (!navigator (geolocation)) {
+throw new Error("No geolocation");
+}
+        function success (pos) {
+            const lat = pos. coords. latitude;
+            const lng = pos.coords.longitude;
+            const markup =`
+            < a href="https://www.openstreetmap.org/#map=16/${lat}/${lng}">
+
+            Your current position: latitude: ${lat}, longitude: ${lng}.
+            </a>`;
+            document. getElementById ('output').innerHTML = markup;   
+        }
+
+window.navigator-geolocation.getCurrentPosition(success,error,options);
+
+    </script>
+</html>
