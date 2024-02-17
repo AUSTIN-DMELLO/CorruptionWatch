@@ -28,8 +28,7 @@
     }
     //collect posts
     $post = new Post();
-    $id = $user_data['userid'];
-    $posts = $post->get_posts($id);
+    $posts = $post->get_posts_for_admin();
 ?>
 <!DOCTYPE html>
 <html>
@@ -140,7 +139,6 @@
             <div style="background-color: white; text-align: center; color: #405d9b;">
             <?php
                 $image="images/coverimage.jpg";
-                $image_class= new Image();
                 if(file_exists($user_data['cover_image'])){
                     $image=$image_class->get_thumb_cover($user_data['cover_image']);
                 }
@@ -161,25 +159,34 @@
                     <a style="text-decoration:none; color:#f0f;" href="change_profile_image.php?change=cover">Change Cover Image</a>
                 </span>
                 <br>
-                <div style="font-size: 20px;color: black;"><?php echo $user_data['first_name'] . " " . $user_data['last_name'] ?>
+                <div style="font-size: 20px;color: black;"><?php echo $user_data['first_name'] . " " . $user_data['last_name'] ?> 
+                </a>
                     </div>
                 <br>
             </div>
             <!--below cover area-->
             <div style="display: flex;">
-                <!--posts area-->
-                <div style="min-height: 400px; flex:2.5; padding: 20px; padding-right: 0px;">
                     <!--posts-->
                     <div id="post_bar">
                        <?php
                        if($posts){
                         foreach($posts as $ROW){
-                            $user=new User();
+                            $user=new User(); 
                             $ROW_USER = $user->get_user($ROW['userid']);
                             include("post.php");
                         }
-                       }
+                    }
                         ?>
+                        <!--posts area-->
+                <div style="min-height: 400px; flex:2.5; padding: 20px; padding-right: 0px;">
+                    <div style="border: solid thin #aaa; padding: 10px; background-color: white;">
+                        <form method="post" enctype="multipart/form-data">
+                            <textarea name="post" placeholder="Type a message"></textarea>
+                            <input type="file" name="file">
+                            <input id="post_button" type="submit" value="Post">
+                            <br>
+                        </form>
+                    </div>
                     </div>
                 </div>
             </div>

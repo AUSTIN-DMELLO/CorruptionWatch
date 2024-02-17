@@ -15,10 +15,7 @@ if(isset($USER)){
 
 ?>
 <div id="blue_bar">
-            <div style="width: 800px; margin: auto; font-size: 30px;">
-            <a href="index.php" style="color:white; text-decoration:none;">
-                Forum </a> &nbsp &nbsp <input type="text" id="search_box" placeholder="Search for people">
-                <a href="profile.php">
+            <div style="width: 800px; margin: auto; font-size: 30px; text-align:center;">Forum
                 <img src="<?php echo $corner_image ?>" alt="" style="width: 50px; float: right;">
                 </a>
                 <a href="Logout.php">

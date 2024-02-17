@@ -1,6 +1,5 @@
-<?php
-?>
-<div id="post">
+
+<div id="post" >
         <div>
             <?php
             if($ROW_USER['gender'] == "Female"){
@@ -19,12 +18,12 @@
         <div style="width:100%">
             <div style="font-weight: bold; color: #405d9b;width:100%;">
             <?php 
-            echo "<a href='profile.php?id=$ROW[userid]'>";
+            if($ROW_USER['email'] == "admin@cw.com"){
+            echo "<a href='profile.php>?id=$COMMENT[userid]'>";
             echo htmlspecialchars($ROW_USER['first_name']) . " " . htmlspecialchars($ROW_USER['last_name']); 
             echo "</a>";
-            if($ROW_USER['email'] == "admin@cw.com"){
             }
-            if($ROW['is_profile_image']){
+            if($COMMENT['is_profile_image']){
                 $pronoun = "his";
                 if($ROW_USER['gender'] == "Female"){
                     $pronoun="her";
@@ -32,7 +31,7 @@
                 echo "<span style='font-weight:normal;color:#aaa;'> updated $pronoun profile image.</span>";
                 
             }
-            if($ROW['is_cover_image']){
+            if($COMMENT['is_cover_image']){
                 $pronoun = "his";
                 if($ROW_USER['gender'] == "Female"){
                     $pronoun="her";
@@ -43,26 +42,30 @@
             ?>
         </div>
                 <?php 
-                echo "<a href='profile.php?id=$ROW[userid]'></a>";
-                echo htmlspecialchars($ROW['post']);
+                echo "<a href='profile.php?id=$ROW[userid]'>";
+                echo htmlspecialchars($ROW_USER['first_name']) . " " . htmlspecialchars($ROW_USER['last_name']); 
+                echo "</a>";
+                echo "<br><br>";
+                echo htmlspecialchars($COMMENT['post']);
                 ?>
                 <br><br>
                 <?php 
-                if(file_exists($ROW['image'])){
-                    $post_image= $image_class->get_thumb_post($ROW['image']);
+                if(file_exists($COMMENT['image'])){
+                    $post_image= $image_class->get_thumb_post($COMMENT['image']);
                     echo "<img src='$post_image' style='width:80%;' />";
-                }             
+                }
+                
                 ?>
                <br><br>
                <?php
                 $likes="";
-                $likes=($ROW['likes']>0) ? "(" . $ROW['likes'] . ")" : "" ;
+                $likes=($COMMENT['likes']>0) ? "(" . $COMMENT['likes'] . ")" : "" ;
                ?>
-            <a href="like.php?type=post&id=<?php echo $ROW['postid'] ?>">Like<?php echo $likes ?> </a>
+            <a href="like.php?type=post&id=<?php echo $COMMENT['postid'] ?>">Like<?php echo $likes ?> </a>
             <span style="color: #999;">
-            <a href="single_post.php?id=<?php echo $ROW['postid'] ?>">Comment</a>
+            <a href="single_post.php?id=<?php echo $COMMENT['postid'] ?>">Reply</a>
             <span style="color: #999;">
-            <?php echo $ROW['date'] ?>
+            <?php echo $COMMENT['date'] ?>
             </span>
             <?php
             ?>
@@ -74,12 +77,12 @@
                 $sql="select * from posts";
                 $result=$DB->read($sql);
             }
-            if($post->i_own_post($ROW['postid'],$_SESSION['WebDevelopment_userid'])){
+            if($post->i_own_post($COMMENT['postid'],$_SESSION['WebDevelopment_userid'])){
                 echo "
-                <a href='edit.php?id=$ROW[postid]'>
+                <a href='edit.php?id=$COMMENT[postid]'>
                 Edit   
                 </a>
-                <a href='delete.php?id=$ROW[postid]' >
+                <a href='delete.php?id=$COMMENT[postid]' >
                 Delete
                 </a>";
             }
@@ -89,7 +92,7 @@
             $i_liked=false;
             if(isset($_SESSION['WebDevelopment_userid'])){
             $DB=new Database();
-            $sql="select likes from likes where type='post' && contentid = '$ROW[postid]' limit 1";
+            $sql="select likes from likes where type='post' && contentid = '$COMMENT[postid]' limit 1";
             $result=$DB->read($sql);
             if(is_array($result)){
                 $likes=json_decode($result[0]['likes'],true);
@@ -99,10 +102,10 @@
                 }
             }
         }
-            if($ROW['likes']>0){
+            if($COMMENT['likes']>0){
                 echo "<br>";
-                echo "<a href='likes.php?type=post&id=$ROW[postid]'>";
-                if($ROW['likes']==1){
+                echo "<a href='likes.php?type=post&id=$COMMENT[postid]'>";
+                if($COMMENT['likes']==1){
                     if($i_liked){
                 echo "<div style='text-align:left;'>You liked this post.</div>";
                     }
@@ -113,13 +116,13 @@
                 else{
                     if($i_liked){
                         $text="others";
-                        if(($ROW['likes'] -1)==1){
+                        if(($COMMENT['likes'] -1)==1){
                             $text="other";
                         }
-                echo "<div style='text-align:left;'>You and " . ($ROW['likes'] -1) . " $text liked this post.</div>";
+                echo "<div style='text-align:left;'>You and " . ($COMMENT['likes'] -1) . " $text liked this post.</div>";
                     }
                     else{
-                echo "<div style='text-align:left;'>" . $ROW['likes'] . " others liked this post.</div>";
+                echo "<div style='text-align:left;'>" . $COMMENT['likes'] . " others liked this post.</div>";
                     }
             }
             echo "</a>";

@@ -10,20 +10,36 @@ include("classes/autoload.php");
     $user_data=$profile_data[0];
     }
 }
+//posting starts here
+if($_SERVER['REQUEST_METHOD'] == "POST"){
+    $post=new Post();
+    $id=$_SESSION['WebDevelopment_userid'];
+    $result=$post->create_post($id,$_POST,$_FILES);
+    if($result == ""){
+        header("Location: single_post.php?$_GET[id]");
+        die;
+    }
+    else{
+        echo "<div style='text-align:center;font-size:12px;color:white;background-color:grey;'>";
+        echo "<br>The following errors occured:<br><br>";
+        echo $result;
+        echo "</div>";
+    }
+}
 $Post=new Post();
-$likes=false;
+$ROW=false;
 $ERROR="";
-if(isset($_GET['id']) && isset($_GET['type'])){
-   $likes=$Post->get_likes($_GET['id'],$_GET['type']);
+if(isset($_GET['id'])){
+   $ROW=$Post->get_one_post($_GET['id']);
 }
 else{
-$ERROR="No information was found!";
+$ERROR="No post was found!";
 }
 ?>
 <!DOCTYPE html>
 <html>
     <head>
-        <title>People who liked | Community Forum</title>
+        <title>Single Post | Community Forum</title>
     </head>
     <style type="text/css">
         #blue_bar{
@@ -116,14 +132,30 @@ $ERROR="No information was found!";
                         <?php
                         $User=new User();
                         $image_class=new Image();
-                            if(is_array($likes)){
-                                foreach($likes as $row){
-                                    $FRIEND_ROW=$User->get_user($row['userid']);
-                                    include("likesusers.php");
-                                }
+                            if(is_array($ROW)){
+                                $ROW_USER=$User->get_user($ROW['userid']);
+                                
+                                include("post.php");
                             }
                         ?>
                         <br style="clear: both;">
+                        <div style="border: solid thin #aaa; padding: 10px; background-color: white;">
+                        <form method="post" enctype="multipart/form-data">
+                            <textarea name="post" placeholder="Post a comment"></textarea>
+                            <input type="hidden" name="parent" value="<?php echo $ROW['postid'] ?>">
+                            <input type="file" name="file">
+                            <input id="post_button" type="submit" value="Post">
+                            <br>
+                        </form>
+                    </div>
+                    <?php
+                    $comments=$Post->get_comments($ROW['postid']);
+                    if(is_array($comments)){
+                        foreach ($comments as $COMMENT){
+                            include("comment.php");
+                        }
+                    }
+                    ?>
                     </div>      
                 </div>
             </div>
